@@ -20,7 +20,7 @@
 
 Summary:       Package that installs PHP 5.6
 Name:          %scl_name
-Version:       2.2
+Version:       2.3
 Release:       1%{?dist}
 Group:         Development/Languages
 License:       GPLv2+
@@ -36,9 +36,9 @@ BuildRequires: help2man
 BuildRequires: iso-codes
 BuildRequires: environment-modules
 
-Requires:      %{?scl_prefix}php-common%{?_isa} >= 5.6.30
+Requires:      %{?scl_prefix}php-common%{?_isa} >= 5.6.31
 Requires:      %{?scl_prefix}php-cli%{?_isa}
-Requires:      %{?scl_prefix}php-pear           >= 1:1.10.3
+Requires:      %{?scl_prefix}php-pear           >= 1:1.10.5
 Requires:      %{?scl_name}-runtime%{?_isa}      = %{version}-%{release}
 
 %description
@@ -160,6 +160,14 @@ if [ "%{_root_sysconfdir}/rpm" != "%{macrosdir}" ]; then
       %{buildroot}%{macrosdir}/macros.%{scl}-config
 fi
 
+%if 0%{?fedora} < 26
+# Create symlinks
+mkdir -p                %{buildroot}%{_root_sysconfdir}/opt/%{scl_vendor}
+ln -s %{_sysconfdir}    %{buildroot}%{_root_sysconfdir}/opt/%{scl_vendor}/%{scl}
+mkdir -p                %{buildroot}%{_root_localstatedir}/opt/%{scl_vendor}
+ln -s %{_localstatedir} %{buildroot}%{_root_localstatedir}/opt/%{scl_vendor}/%{scl}
+%endif
+
 
 %post runtime
 # Simple copy of context from system root to SCL root.
@@ -196,6 +204,10 @@ restorecon -R %{_localstatedir} &>/dev/null || :
 %if ! %{with_modules}
 %{_root_datadir}/Modules/modulefiles/%{scl_name}
 %endif
+%if 0%{?fedora} < 26
+%{_root_sysconfdir}/opt/%{scl_vendor}/%{scl}
+%{_root_localstatedir}/opt/%{scl_vendor}/%{scl}
+%endif
 
 
 %files build
@@ -209,6 +221,9 @@ restorecon -R %{_localstatedir} &>/dev/null || :
 
 
 %changelog
+* Mon Aug 28 2017 Remi Collet <remi@remirepo.net> - 2.3-1
+- add symlinks for /etc/opt/remi/php56 and /var/opt/remi/php56
+
 * Fri Mar 17 2017 Remi Collet <remi@remirepo.net> - 2.2-1
 - use rh_layout on F26
 
