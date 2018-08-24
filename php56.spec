@@ -3,16 +3,19 @@
 %global scl              %{scl_name_base}%{scl_name_version}
 %global macrosdir        %(d=%{_rpmconfigdir}/macros.d; [ -d $d ] || d=%{_root_sysconfdir}/rpm; echo $d)
 %global install_scl      1
+
 %if 0%{?fedora} >= 26
 %global rh_layout        1
 %endif
-%if 0%{?fedora} >= 20
-# Requires scl-utils v2 for SCL integration
+
+%if 0%{?fedora} >= 20 && 0%{?fedora} < 27
+# Requires scl-utils v2 for SCL integration, dropeed in F29
 %global with_modules     1
 %else
 # Works with file installed in /usr/share/Modules/modulefiles/
 %global with_modules     0
 %endif
+
 %scl_package %scl
 
 # do not produce empty debuginfo package
@@ -21,7 +24,7 @@
 Summary:       Package that installs PHP 5.6
 Name:          %scl_name
 Version:       2.3
-Release:       1%{?dist}
+Release:       2%{?dist}
 Group:         Development/Languages
 License:       GPLv2+
 
@@ -221,6 +224,9 @@ restorecon -R %{_localstatedir} &>/dev/null || :
 
 
 %changelog
+* Fri Aug 24 2018 Remi Collet <remi@remirepo.net> 2.3-2
+- scl-utils 2.0.2 drop modules support
+
 * Mon Aug 28 2017 Remi Collet <remi@remirepo.net> - 2.3-1
 - add symlinks for /etc/opt/remi/php56 and /var/opt/remi/php56
 
