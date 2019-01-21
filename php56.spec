@@ -1,10 +1,18 @@
+# remirepo spec file for php56 SCL metapackage
+#
+# Copyright (c) 2013-2019 Remi Collet
+# License: CC-BY-SA
+# http://creativecommons.org/licenses/by-sa/4.0/
+#
+# Please, preserve the changelog entries
+#
 %global scl_name_base    php
 %global scl_name_version 56
 %global scl              %{scl_name_base}%{scl_name_version}
 %global macrosdir        %(d=%{_rpmconfigdir}/macros.d; [ -d $d ] || d=%{_root_sysconfdir}/rpm; echo $d)
 %global install_scl      1
 
-%if 0%{?fedora} >= 26
+%if 0%{?fedora} >= 26 || 0%{?rhel} >= 8
 %global rh_layout        1
 %endif
 
@@ -24,7 +32,7 @@
 Summary:       Package that installs PHP 5.6
 Name:          %scl_name
 Version:       2.3
-Release:       2%{?dist}
+Release:       3%{?dist}
 Group:         Development/Languages
 License:       GPLv2+
 
@@ -163,7 +171,7 @@ if [ "%{_root_sysconfdir}/rpm" != "%{macrosdir}" ]; then
       %{buildroot}%{macrosdir}/macros.%{scl}-config
 fi
 
-%if 0%{?fedora} < 26
+%if 0%{?fedora} < 26 && 0%{?rhel} < 8
 # Create symlinks
 mkdir -p                %{buildroot}%{_root_sysconfdir}/opt/%{scl_vendor}
 ln -s %{_sysconfdir}    %{buildroot}%{_root_sysconfdir}/opt/%{scl_vendor}/%{scl}
@@ -175,13 +183,13 @@ ln -s %{_localstatedir} %{buildroot}%{_root_localstatedir}/opt/%{scl_vendor}/%{s
 %post runtime
 # Simple copy of context from system root to SCL root.
 semanage fcontext -a -e /                      %{?_scl_root}     &>/dev/null || :
-%if 0%{?fedora} >= 26
+%if 0%{?fedora} >= 26 || 0%{?rhel} >= 8
 semanage fcontext -a -e %{_root_sysconfdir}    %{_sysconfdir}    &>/dev/null || :
 semanage fcontext -a -e %{_root_localstatedir} %{_localstatedir} &>/dev/null || :
 %endif
 selinuxenabled && load_policy || :
 restorecon -R %{?_scl_root}     &>/dev/null || :
-%if 0%{?fedora} >= 26
+%if 0%{?fedora} >= 26 || 0%{?rhel} >= 8
 restorecon -R %{_sysconfdir}    &>/dev/null || :
 restorecon -R %{_localstatedir} &>/dev/null || :
 %endif
@@ -207,7 +215,7 @@ restorecon -R %{_localstatedir} &>/dev/null || :
 %if ! %{with_modules}
 %{_root_datadir}/Modules/modulefiles/%{scl_name}
 %endif
-%if 0%{?fedora} < 26
+%if 0%{?fedora} < 26 && 0%{?rhel} < 8
 %{_root_sysconfdir}/opt/%{scl_vendor}/%{scl}
 %{_root_localstatedir}/opt/%{scl_vendor}/%{scl}
 %endif
@@ -224,6 +232,9 @@ restorecon -R %{_localstatedir} &>/dev/null || :
 
 
 %changelog
+* Mon Jan 21 2019 Remi Collet <remi@remirepo.net> 2.3-3
+- cleanup for EL-8
+
 * Fri Aug 24 2018 Remi Collet <remi@remirepo.net> 2.3-2
 - scl-utils 2.0.2 drop modules support
 
