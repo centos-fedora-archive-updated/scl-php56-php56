@@ -31,8 +31,8 @@
 
 Summary:       Package that installs PHP 5.6
 Name:          %scl_name
-Version:       2.3
-Release:       3%{?dist}
+Version:       3.0
+Release:       1%{?dist}
 Group:         Development/Languages
 License:       GPLv2+
 
@@ -90,6 +90,31 @@ Requires:  %{?scl_name}-runtime%{?_isa} = %{version}-%{release}
 %description scldevel
 Package shipping development files, especially usefull for development of
 packages depending on %scl Software Collection.
+
+
+%package syspaths
+Summary:   System-wide wrappers for the %{name} package
+Requires:  %{?scl_name}-runtime%{?_isa} = %{version}-%{release}
+Requires:  %{?scl_name}-php-cli%{?_isa}
+Requires:  %{?scl_name}-php-common%{?_isa}
+Conflicts: php-common
+Conflicts: php-cli
+Conflicts: php54-syspaths
+Conflicts: php55-syspaths
+Conflicts: php70-syspaths
+Conflicts: php71-syspaths
+Conflicts: php72-syspaths
+Conflicts: php73-syspaths
+
+%description syspaths
+System-wide wrappers for the %{name}-php-cli package.
+
+Using the %{name}-syspaths package does not require running the
+'scl enable' or 'module command. This package practically replaces the system
+default php-cli package. It provides the php, phar and php-cgi commands.
+
+Note that the php-cli and %{name}-syspaths packages conflict and cannot
+be installed on one system.
 
 
 %prep
@@ -179,6 +204,19 @@ mkdir -p                %{buildroot}%{_root_localstatedir}/opt/%{scl_vendor}
 ln -s %{_localstatedir} %{buildroot}%{_root_localstatedir}/opt/%{scl_vendor}/%{scl}
 %endif
 
+# syspaths
+mkdir -p %{buildroot}%{_root_sysconfdir}
+ln -s %{_sysconfdir}/php.ini %{buildroot}%{_root_sysconfdir}/php.ini
+ln -s %{_sysconfdir}/php.d   %{buildroot}%{_root_sysconfdir}/php.d
+mkdir -p %{buildroot}%{_root_bindir}
+ln -s %{_bindir}/php     %{buildroot}%{_root_bindir}/php
+ln -s %{_bindir}/phar    %{buildroot}%{_root_bindir}/phar
+ln -s %{_bindir}/php-cgi %{buildroot}%{_root_bindir}/php-cgi
+mkdir -p %{buildroot}%{_root_mandir}/man1
+ln -s %{_mandir}/man1/php.1.gz     %{buildroot}%{_root_mandir}/man1/php.1.gz
+ln -s %{_mandir}/man1/phar.1.gz    %{buildroot}%{_root_mandir}/man1/phar.1.gz
+ln -s %{_mandir}/man1/php-cgi.1.gz %{buildroot}%{_root_mandir}/man1/php-cgi.1.gz
+
 
 %post runtime
 # Simple copy of context from system root to SCL root.
@@ -232,6 +270,21 @@ restorecon -R %{_localstatedir} &>/dev/null || :
 
 
 %changelog
+%files syspaths
+%{_root_sysconfdir}/php.ini
+%{_root_sysconfdir}/php.d
+%{_root_bindir}/php
+%{_root_bindir}/phar
+%{_root_bindir}/php-cgi
+%{_root_mandir}/man1/php.1.gz
+%{_root_mandir}/man1/phar.1.gz
+%{_root_mandir}/man1/php-cgi.1.gz
+
+
+%changelog
+* Wed Feb 20 2019 Remi Collet <remi@remirepo.net> 3.0-1
+- add syspaths sub package providing system-wide wrappers
+
 * Mon Jan 21 2019 Remi Collet <remi@remirepo.net> 2.3-3
 - cleanup for EL-8
 
