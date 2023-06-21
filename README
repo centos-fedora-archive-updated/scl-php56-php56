@@ -23,11 +23,13 @@ which adds support for the PHP language to Apache HTTP server.
 The %{?scl_prefix}php-fpm package provides the FastCGI process manager
 which adds support for the PHP language to FastCGI compatible servers.
 
-FastCGI process manager (php-fpm) listens on local network soket
-(by default port 9000).
+FastCGI process manager (php-fpm) listens on local soket
+(by default %{_localstatedir}/run/php-fpm/www.sock).
 
 When working with %{scl_name} collection, use the "scl" utility (see
 scl(1) for usage) to enable the scl environment properly.
+
+You can alternatively use the "module" utility (see module(1) for usage).
 
 Configuration for the %{scl_name} software collection is located under %{_sysconfdir}.
 
@@ -46,9 +48,11 @@ scl enable %{scl_name} 'man php'
   Show man pages for php command, which is part of the %{scl_name} software
   collection.
 
-%if 0%{?rhel} >= 7
+module load %{scl_name}
+  Enable %{scl_name} software collection in current interactive shell.
+
+module unload %{scl_name}
+  Disable %{scl_name} software collection in current interactive shell.
+
 systemctl start %{?scl_prefix}php-fpm
-%else
-service %{?scl_prefix}php-fpm start
-%endif
   Starts the php-fpm server from %{scl_name} software collection.

@@ -1,9 +1,13 @@
-%_sclreq (%{scl_vendor})
+%scl_vendor   @VENDOR@
+%_scl_prefix  @PREFIX@
+%_sclreq     (@VENDOR@)
 
 %scl_package_override() %{expand:
   %{?@SCL@___pear:%global __pear %@SCL@___pear}
   %{?@SCL@___pecl:%global __pecl %@SCL@___pecl}
   %{?@SCL@___php:%global  __php  %@SCL@___php}
+  %{?@SCL@___phpize:%global  __phpize  %@SCL@___phpize}
+  %{?@SCL@___phpconfig:%global  __phpconfig  %@SCL@___phpconfig}
   %{?@SCL@_pecl_xmldir:%global pecl_xmldir %@SCL@_pecl_xmldir}
   %global pear_metadir %@SCL@_pear_metadir
   %global pear_xmldir  %@SCL@_pear_xmldir

@@ -1,7 +1,7 @@
 # remirepo spec file for php56 SCL metapackage
 #
-# Copyright (c) 2013-2019 Remi Collet
-# License: CC-BY-SA
+# Copyright (c) 2013-2023 Remi Collet
+# License: CC-BY-SA-4.0
 # http://creativecommons.org/licenses/by-sa/4.0/
 #
 # Please, preserve the changelog entries
@@ -31,10 +31,10 @@
 
 Summary:       Package that installs PHP 5.6
 Name:          %scl_name
-Version:       3.0
+Version:       5.6
 Release:       1%{?dist}
 Group:         Development/Languages
-License:       GPLv2+
+License:       GPL-2.0-or-later
 
 Source0:       macros-build
 Source1:       README
@@ -161,7 +161,7 @@ cp %{SOURCE2} .
 # generate a helper script that will be used by help2man
 cat >h2m_helper <<'EOF'
 #!/bin/bash
-[ "$1" == "--version" ] && echo "%{scl_name} %{version} Software Collection" || cat README
+[ "$1" == "--version" ] && echo "%{scl_name} Software Collection (PHP %{version})" || cat README
 EOF
 chmod a+x h2m_helper
 
@@ -177,7 +177,7 @@ install -D -m 644 envmod %{buildroot}%{_scl_scripts}/%{scl_name}
 install -D -m 644 envmod %{buildroot}%{_root_datadir}/Modules/modulefiles/%{scl_name}
 %endif
 install -D -m 644 scldev %{buildroot}%{macrosdir}/macros.%{scl_name_base}-scldevel
-install -D -m 644 %{scl_name}.7 %{buildroot}%{_mandir}/man7/%{scl_name}.7
+install -D -m 644 %{scl_name}.7 %{buildroot}%{_root_mandir}/man7/%{scl_name}.7
 
 install -d -m 755 %{buildroot}%{_datadir}/licenses
 install -d -m 755 %{buildroot}%{_datadir}/doc/pecl
@@ -187,7 +187,7 @@ install -d -m 755 %{buildroot}%{_localstatedir}/lib/pear/pkgxml
 %scl_install
 
 # Add the scl_package_override macro
-sed -e 's/@SCL@/%{scl}/g' %{SOURCE0} \
+sed -e 's/@SCL@/%{scl}/g;s:@PREFIX@:/opt/%{scl_vendor}:;s/@VENDOR@/%{scl_vendor}/' %{SOURCE0} \
   | tee -a %{buildroot}%{_root_sysconfdir}/rpm/macros.%{scl}-config
 
 # Move in correct location, if needed
@@ -247,7 +247,7 @@ restorecon -R %{_localstatedir} &>/dev/null || :
 %license LICENSE
 %doc README
 %scl_files
-%{_mandir}/man7/%{scl_name}.*
+%{_root_mandir}/man7/%{scl_name}.*
 %{?_licensedir:%{_datadir}/licenses}
 %{_datadir}/tests
 %if ! %{with_modules}
@@ -282,6 +282,12 @@ restorecon -R %{_localstatedir} &>/dev/null || :
 
 
 %changelog
+* Wed Jun 21 2023 Remi Collet <remi@remirepo.net> 5.6-1
+- define %%scl_vendor and %%_scl_prefix in macros.php56-config
+- redefine %%__phpize and %%__phpconfig
+- move man page out of scl tree
+- improve the man page
+
 * Wed Feb 20 2019 Remi Collet <remi@remirepo.net> 3.0-1
 - add syspaths sub package providing system-wide wrappers
 
