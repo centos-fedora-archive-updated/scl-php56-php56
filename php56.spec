@@ -6,6 +6,7 @@
 #
 # Please, preserve the changelog entries
 #
+%global scl_vendor remi
 %global scl_name_base    php
 %global scl_name_version 56
 %global scl              %{scl_name_base}%{scl_name_version}
@@ -32,13 +33,13 @@
 Summary:       Package that installs PHP 5.6
 Name:          %scl_name
 Version:       5.6
-Release:       1%{?dist}
+Release:       2%{?dist}
 Group:         Development/Languages
 License:       GPL-2.0-or-later
 
-Source0:       macros-build
-Source1:       README
-Source2:       LICENSE
+Source0:       https://raw.githubusercontent.com/remiupgradescl/scl-php56-php56/master/macros-build
+Source1:       https://raw.githubusercontent.com/remiupgradescl/scl-php56-php56/master/README
+Source2:       https://raw.githubusercontent.com/remiupgradescl/scl-php56-php56/master/LICENSE
 
 BuildRoot:     %{_tmppath}/%{name}-%{version}-%{release}-root-%(%{__id_u} -n)
 BuildRequires: scl-utils-build
